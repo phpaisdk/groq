@@ -53,6 +53,22 @@ it('generates text end to end through the Groq vertical', function () {
     expect($client->lastRequest->getHeaderLine('Authorization'))->toBe('Bearer gsk-test');
 });
 
+it('normalizes provider-neutral text usage fields', function () {
+    $client = new FakeHttpClient(200, json_encode([
+        'choices' => [['index' => 0, 'message' => ['content' => 'Hello from Groq'], 'finish_reason' => 'stop']],
+        'usage' => ['input_tokens' => 13, 'output_tokens' => 6, 'total_tokens' => 19],
+    ]));
+    configureGroqWith($client);
+
+    Groq::create(['apiKey' => 'gsk-test']);
+
+    $result = Generate::text('Hi')->model(Groq::model('llama-3.3-70b-versatile'))->run();
+
+    expect($result->usage->inputTokens)->toBe(13)
+        ->and($result->usage->outputTokens)->toBe(6)
+        ->and($result->usage->totalTokens)->toBe(19);
+});
+
 it('maps a 429 to a rate limit exception', function () {
     $client = new FakeHttpClient(429, json_encode(['error' => ['message' => 'slow down']]));
     configureGroqWith($client);
