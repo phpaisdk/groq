@@ -77,6 +77,37 @@ it('maps a 429 to a rate limit exception', function () {
     Generate::text('Hi')->model(Groq::model('llama-3.3-70b-versatile'))->run();
 })->throws(\AiSdk\Exceptions\RateLimitException::class);
 
+it('generates speech through the Groq vertical', function () {
+    $client = new FakeHttpClient(200, 'wav-bytes', 'audio/wav');
+    configureGroqWith($client);
+
+    Groq::create(['apiKey' => 'gsk-test']);
+
+    $result = Generate::speech()
+        ->model(Groq::speech('canopylabs/orpheus-v1-english'))
+        ->input('Welcome to Orpheus text-to-speech. [cheerful] This is a Groq speech test.')
+        ->voice('austin')
+        ->format('wav')
+        ->run();
+
+    expect($result->output->data)->toBe('wav-bytes')
+        ->and($result->output->mimeType)->toBe('audio/wav')
+        ->and($result->providerMetadata['groq']['model'])->toBe('canopylabs/orpheus-v1-english')
+        ->and($result->providerMetadata['groq']['format'])->toBe('wav');
+
+    $body = $client->sentBody();
+    expect($body)->toMatchArray([
+        'model' => 'canopylabs/orpheus-v1-english',
+        'input' => 'Welcome to Orpheus text-to-speech. [cheerful] This is a Groq speech test.',
+        'voice' => 'austin',
+        'response_format' => 'wav',
+    ]);
+
+    expect($client->lastRequest->getUri()->getPath())->toBe('/openai/v1/audio/speech')
+        ->and($client->lastRequest->getHeaderLine('Accept'))->toBe('audio/wav')
+        ->and($client->lastRequest->getHeaderLine('Authorization'))->toBe('Bearer gsk-test');
+});
+
 it('falls back to json_object structured output for models without json_schema support', function () {
     $client = new FakeHttpClient(200, json_encode([
         'choices' => [['message' => ['content' => '{"city":"Lahore","country":"Pakistan"}'], 'finish_reason' => 'stop']],
@@ -127,4 +158,12 @@ it('loads image input support from resources models json', function () {
     expect(Groq::model('meta-llama/llama-4-scout-17b-16e-instruct')->supports(\AiSdk\Capability::ImageInput))->toBeTrue()
         ->and(Groq::model('meta-llama/llama-4-maverick-17b-128e-instruct')->supports(\AiSdk\Capability::ImageInput))->toBeTrue()
         ->and(Groq::model('llama-3.1-8b-instant')->supports(\AiSdk\Capability::ImageInput))->toBeFalse();
+});
+
+it('loads speech generation support from resources models json', function () {
+    Groq::create(['apiKey' => 'gsk-test']);
+
+    expect(Groq::speech('canopylabs/orpheus-v1-english')->supports(\AiSdk\Capability::SpeechGeneration))->toBeTrue()
+        ->and(Groq::speech('canopylabs/orpheus-arabic-saudi')->supports(\AiSdk\Capability::SpeechGeneration))->toBeTrue()
+        ->and(Groq::model('llama-3.1-8b-instant')->supports(\AiSdk\Capability::SpeechGeneration))->toBeFalse();
 });

@@ -58,6 +58,7 @@ $provider = Groq::create([
 | Streaming | Native |
 | Tool calling | Native |
 | Structured output | Adapted on most models (`json_object` + instruction); native on `gpt-oss-*` and `kimi*` |
+| Speech generation | Native |
 | Text input | Native |
 | Image input | Native (Llama 4 models) |
 
@@ -76,6 +77,22 @@ foreach ($stream->chunks() as $chunk) {
 }
 
 $result = $stream->run();
+```
+
+## Speech Generation
+
+```php
+use AiSdk\Generate;
+use AiSdk\Groq;
+
+$result = Generate::speech()
+    ->model(Groq::speech('canopylabs/orpheus-v1-english'))
+    ->input('Welcome to Orpheus text-to-speech. [cheerful] This is expressive Groq audio generation.')
+    ->voice('austin')
+    ->format('wav')
+    ->run();
+
+$result->output->save(__DIR__.'/orpheus.wav');
 ```
 
 ## Structured Output
