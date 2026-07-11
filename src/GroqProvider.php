@@ -21,11 +21,11 @@ final class GroqProvider extends BaseProvider
 
     public function textModel(string $modelId): TextModelInterface
     {
-        return new GroqTextModel($modelId, $this->options, $this->modelRegistry());
+        return new GroqTextModel($modelId, $this->options);
     }
 
     public function speechModel(string $modelId): SpeechModelInterface
     {
-        return new GroqSpeechModel($modelId, $this->options, $this->modelRegistry());
+        return new GroqSpeechModel($modelId, $this->options);
     }
 }

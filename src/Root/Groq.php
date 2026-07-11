@@ -8,7 +8,6 @@ use AiSdk\Contracts\SpeechModelInterface;
 use AiSdk\Contracts\TextModelInterface;
 use AiSdk\Groq\GroqOptions;
 use AiSdk\Groq\GroqProvider;
-use AiSdk\Support\Concerns\RegistersModels;
 
 /**
  * Friendly facade for the Groq provider.
@@ -17,8 +16,6 @@ use AiSdk\Support\Concerns\RegistersModels;
  */
 final class Groq
 {
-    use RegistersModels;
-
     private static ?GroqProvider $default = null;
 
     /**

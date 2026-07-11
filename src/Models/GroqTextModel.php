@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AiSdk\Groq\Models;
 
 use AiSdk\Capability;
-use AiSdk\CapabilitySupport;
 use AiSdk\Contracts\BaseModel;
 use AiSdk\Contracts\TextModelInterface;
 use AiSdk\Groq\GroqOptions;
@@ -14,17 +13,27 @@ use AiSdk\OpenAICompatible\ChatResponseParser;
 use AiSdk\OpenAICompatible\ChatStreamParser;
 use AiSdk\Requests\TextModelRequest;
 use AiSdk\Responses\TextModelResponse;
-use AiSdk\Support\ModelCatalog;
-use AiSdk\Support\ModelRegistry;
 use AiSdk\Utils\Support\Url;
 use Generator;
 
 final class GroqTextModel extends BaseModel implements TextModelInterface
 {
+    private const array ADAPTER_CAPABILITIES = [
+        Capability::TextGeneration,
+        Capability::Streaming,
+        Capability::ToolCalling,
+        Capability::Reasoning,
+        Capability::TextInput,
+        Capability::ImageInput,
+    ];
+
+    private const array ADAPTED_CAPABILITIES = [
+        'structured_output' => 'json_schema downgraded to json_object',
+    ];
+
     public function __construct(
         private readonly string $modelId,
         private readonly GroqOptions $options,
-        private readonly ?ModelRegistry $registry = null,
     ) {}
 
     public function provider(): string
@@ -37,45 +46,10 @@ final class GroqTextModel extends BaseModel implements TextModelInterface
         return $this->modelId;
     }
 
-    /**
-     * @return array<int, Capability>
-     */
-    public function capabilities(): array
-    {
-        $definition = $this->registry?->resolve($this->provider(), $this->modelId);
-        if ($definition !== null) {
-            return $this->configuredCapabilities($definition->capabilities);
-        }
-
-        return $this->configuredCapabilities($this->catalog()->capabilities($this->modelId));
-    }
-
-    public function capability(Capability $capability): CapabilitySupport
-    {
-        $configured = $this->configuredCapability($capability);
-        if ($configured !== null) {
-            return $configured;
-        }
-
-        $registered = $this->registry?->capability($this->provider(), $this->modelId, $capability);
-        if ($registered !== null) {
-            return $registered;
-        }
-
-        $support = $this->catalog()->capability($this->modelId, $capability);
-
-        // Unknown model: allow text generation, defer other capabilities to provider API errors.
-        if (! $support->isSupported()
-            && $capability === Capability::TextGeneration
-            && $this->catalog()->capabilities($this->modelId) === []) {
-            return CapabilitySupport::supported($capability, 'unknown-model-fallback');
-        }
-
-        return $support;
-    }
-
     public function generate(TextModelRequest $request): TextModelResponse
     {
+        $this->ensureTextRequestSupported($request, self::ADAPTER_CAPABILITIES, self::ADAPTED_CAPABILITIES);
+
         $body = $this->buildBody($request, stream: false);
         $url = Url::joinPath($this->options->baseUrl, '/chat/completions');
 
@@ -87,6 +61,8 @@ final class GroqTextModel extends BaseModel implements TextModelInterface
 
     public function stream(TextModelRequest $request): Generator
     {
+        $this->ensureTextRequestSupported($request, self::ADAPTER_CAPABILITIES, self::ADAPTED_CAPABILITIES, streaming: true);
+
         $body = $this->buildBody($request, stream: true);
         $url = Url::joinPath($this->options->baseUrl, '/chat/completions');
 
@@ -104,7 +80,7 @@ final class GroqTextModel extends BaseModel implements TextModelInterface
         $body = ChatRequestBuilder::build($this->modelId, $this->provider(), $request, $stream);
 
         if (($body['response_format']['type'] ?? null) === 'json_schema'
-            && $this->capability(Capability::StructuredOutput)->state === \AiSdk\CapabilitySupportState::Adapted) {
+            && $this->usesAdaptedCapability(Capability::StructuredOutput, self::ADAPTED_CAPABILITIES)) {
             $body['response_format'] = ['type' => 'json_object'];
         }
 
@@ -138,8 +114,4 @@ final class GroqTextModel extends BaseModel implements TextModelInterface
         return $messages;
     }
 
-    private function catalog(): ModelCatalog
-    {
-        return ModelCatalog::fromFile(dirname(__DIR__, 2) . '/resources/models.json');
-    }
 }

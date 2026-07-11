@@ -57,10 +57,10 @@ $provider = Groq::create([
 | Text generation | Native |
 | Streaming | Native |
 | Tool calling | Native |
-| Structured output | Adapted on most models (`json_object` + instruction); native on `gpt-oss-*` and `kimi*` |
+| Structured output | Adapted (`json_object` + instruction); exact native support can be declared at runtime |
 | Speech generation | Native |
 | Text input | Native |
-| Image input | Native (Llama 4 models) |
+| Image input | Supported by the adapter; the selected model is validated by Groq |
 
 ## Streaming
 
@@ -97,7 +97,7 @@ $result->output->save(__DIR__.'/orpheus.wav');
 
 ## Structured Output
 
-Most Groq models do not support native `json_schema`. The provider automatically degrades to `json_object` with an injected JSON instruction:
+Without an exact runtime capability override, the provider adapter degrades `json_schema` to `json_object` with an injected JSON instruction:
 
 ```php
 use AiSdk\Generate;
@@ -138,28 +138,11 @@ $result = Generate::text()
     ->run();
 ```
 
-## Custom Model Registration
+## Model IDs and Capabilities
 
-Register new Groq models without waiting for a package release:
+Groq model IDs pass through unchanged and do not need to be registered. The package does not ship a model inventory; the Groq API remains the authority on whether a particular model accepts a requested feature.
 
-```php
-use AiSdk\Capability;
-use AiSdk\Groq;
-
-Groq::registerModel('llama-5-70b', capabilities: [
-    Capability::TextGeneration,
-    Capability::Streaming,
-    Capability::ToolCalling,
-    Capability::StructuredOutput,
-    Capability::TextInput,
-]);
-
-$result = Generate::text('Hello')
-    ->model(Groq::model('llama-5-70b'))
-    ->run();
-```
-
-Use `ModelDefinition` only when you need metadata or adapted-capability details.
+Capabilities describe what the Groq adapter can serialize. The Groq API returns a normalized SDK exception if the selected model or requested feature is rejected.
 
 ## Provider-Specific Options
 

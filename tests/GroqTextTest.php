@@ -135,35 +135,14 @@ it('falls back to json_object structured output for models without json_schema s
         ->and($result->output)->toBe(['city' => 'Lahore', 'country' => 'Pakistan']);
 });
 
-it('reports json object fallback as an adapted structured output capability', function () {
+it('accepts opaque text model ids without a model inventory', function () {
     Groq::create(['apiKey' => 'gsk-test']);
 
-    $support = Groq::model('llama-3.1-8b-instant')->capability(\AiSdk\Capability::StructuredOutput);
-
-    expect($support->state)->toBe(\AiSdk\CapabilitySupportState::Adapted)
-        ->and($support->strategy)->toContain('json_schema');
+    expect(Groq::model('future-private-model')->modelId())->toBe('future-private-model');
 });
 
-it('loads native structured output support from current Groq GPT OSS models', function () {
+it('accepts opaque speech model ids without a model inventory', function () {
     Groq::create(['apiKey' => 'gsk-test']);
 
-    expect(Groq::model('openai/gpt-oss-20b')->supports(\AiSdk\Capability::StructuredOutput))->toBeTrue()
-        ->and(Groq::model('openai/gpt-oss-120b')->supports(\AiSdk\Capability::StructuredOutput))->toBeTrue()
-        ->and(Groq::model('llama-3.3-70b-versatile')->supports(\AiSdk\Capability::StructuredOutput))->toBeFalse();
-});
-
-it('loads image input support from resources models json', function () {
-    Groq::create(['apiKey' => 'gsk-test']);
-
-    expect(Groq::model('meta-llama/llama-4-scout-17b-16e-instruct')->supports(\AiSdk\Capability::ImageInput))->toBeTrue()
-        ->and(Groq::model('meta-llama/llama-4-maverick-17b-128e-instruct')->supports(\AiSdk\Capability::ImageInput))->toBeTrue()
-        ->and(Groq::model('llama-3.1-8b-instant')->supports(\AiSdk\Capability::ImageInput))->toBeFalse();
-});
-
-it('loads speech generation support from resources models json', function () {
-    Groq::create(['apiKey' => 'gsk-test']);
-
-    expect(Groq::speech('canopylabs/orpheus-v1-english')->supports(\AiSdk\Capability::SpeechGeneration))->toBeTrue()
-        ->and(Groq::speech('canopylabs/orpheus-arabic-saudi')->supports(\AiSdk\Capability::SpeechGeneration))->toBeTrue()
-        ->and(Groq::model('llama-3.1-8b-instant')->supports(\AiSdk\Capability::SpeechGeneration))->toBeFalse();
+    expect(Groq::speech('future-speech-model')->modelId())->toBe('future-speech-model');
 });
