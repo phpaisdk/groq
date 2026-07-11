@@ -59,6 +59,7 @@ $provider = Groq::create([
 | Tool calling | Native |
 | Structured output | Adapted (`json_object` + instruction); exact native support can be declared at runtime |
 | Speech generation | Native |
+| Embeddings | Native |
 | Text input | Native |
 | Image input | Supported by the adapter; the selected model is validated by Groq |
 
@@ -78,6 +79,23 @@ foreach ($stream->chunks() as $chunk) {
 
 $result = $stream->run();
 ```
+
+## Embeddings
+
+```php
+use AiSdk\Generate;
+use AiSdk\Groq;
+
+$result = Generate::embedding(['Search query', 'Document text'])
+    ->model(Groq::embedding('nomic-embed-text-v1_5'))
+    ->providerOptions('groq', ['user' => 'user-123'])
+    ->run();
+
+$queryVector = $result->embeddings[0]->vector;
+$documentVector = $result->embeddings[1]->vector;
+```
+
+Groq's embedding request schema does not expose a dimensions field, so this adapter rejects the portable `dimensions()` option before sending a request.
 
 ## Speech Generation
 
@@ -167,4 +185,5 @@ composer test
 
 - [Core Package](https://github.com/phpaisdk/core)
 - [OpenAI-Compatible Package](https://github.com/phpaisdk/openai-compatible)
+- [Groq Python SDK Embeddings Resource](https://github.com/groq/groq-python/blob/main/src/groq/resources/embeddings.py)
 - [Project Documentation](https://github.com/phpaisdk)

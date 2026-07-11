@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AiSdk;
 
+use AiSdk\Contracts\EmbeddingModelInterface;
 use AiSdk\Contracts\SpeechModelInterface;
 use AiSdk\Contracts\TextModelInterface;
 use AiSdk\Groq\GroqOptions;
@@ -44,5 +45,10 @@ final class Groq
     public static function speech(string $modelId): SpeechModelInterface
     {
         return self::default()->speechModel($modelId);
+    }
+
+    public static function embedding(string $modelId): EmbeddingModelInterface
+    {
+        return self::default()->embeddingModel($modelId);
     }
 }
