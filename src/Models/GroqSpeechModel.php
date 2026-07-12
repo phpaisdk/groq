@@ -33,7 +33,8 @@ final class GroqSpeechModel extends BaseModel implements SpeechModelInterface
     public function generate(SpeechRequest $request): SpeechResponse
     {
         $body = SpeechRequestBuilder::build($this->modelId, $this->provider(), $request);
-        $format = (string) ($body['response_format'] ?? 'wav');
+        $format = $request->format ?? 'wav';
+        $body['response_format'] = $format;
         $url = Url::joinPath($this->options->baseUrl, '/audio/speech');
 
         $response = $this->runner($this->options->sdk)
