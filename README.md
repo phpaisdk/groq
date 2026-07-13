@@ -59,6 +59,7 @@ $provider = Groq::create([
 | Tool calling | Native |
 | Structured output | Adapted (`json_object` + instruction); exact native support can be declared at runtime |
 | Speech generation | Native |
+| Transcription | Native |
 | Embeddings | Native |
 | Text input | Native |
 | Image input | Supported by the adapter; the selected model is validated by Groq |
@@ -112,6 +113,22 @@ $result = Generate::speech()
 
 $result->output->save(__DIR__.'/orpheus.wav');
 ```
+
+## Transcription
+
+```php
+use AiSdk\Content;
+use AiSdk\Generate;
+use AiSdk\Groq;
+
+$result = Generate::transcription(Content::audio(__DIR__.'/meeting.mp3'))
+    ->model(Groq::transcription('whisper-large-v3-turbo'))
+    ->run();
+
+echo $result->output->text;
+```
+
+Groq transcription also accepts an HTTP audio URL through `Content::audio('https://...')`.
 
 ## Structured Output
 
@@ -185,5 +202,6 @@ composer test
 
 - [Core Package](https://github.com/phpaisdk/core)
 - [OpenAI-Compatible Package](https://github.com/phpaisdk/openai-compatible)
+- [Groq Speech-to-Text Guide](https://console.groq.com/docs/speech-to-text)
 - [Groq Python SDK Embeddings Resource](https://github.com/groq/groq-python/blob/main/src/groq/resources/embeddings.py)
 - [Project Documentation](https://github.com/phpaisdk)

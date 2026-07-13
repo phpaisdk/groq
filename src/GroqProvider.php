@@ -11,11 +11,14 @@ use AiSdk\Contracts\SpeechModelInterface;
 use AiSdk\Contracts\SpeechProviderInterface;
 use AiSdk\Contracts\TextModelInterface;
 use AiSdk\Contracts\TextProviderInterface;
+use AiSdk\Contracts\TranscriptionModelInterface;
+use AiSdk\Contracts\TranscriptionProviderInterface;
 use AiSdk\Groq\Models\GroqEmbeddingModel;
 use AiSdk\Groq\Models\GroqSpeechModel;
 use AiSdk\Groq\Models\GroqTextModel;
+use AiSdk\Groq\Models\GroqTranscriptionModel;
 
-final class GroqProvider extends BaseProvider implements EmbeddingProviderInterface, SpeechProviderInterface, TextProviderInterface
+final class GroqProvider extends BaseProvider implements EmbeddingProviderInterface, SpeechProviderInterface, TextProviderInterface, TranscriptionProviderInterface
 {
     public function __construct(public readonly GroqOptions $options) {}
 
@@ -32,6 +35,11 @@ final class GroqProvider extends BaseProvider implements EmbeddingProviderInterf
     public function speechModel(string $modelId): SpeechModelInterface
     {
         return new GroqSpeechModel($modelId, $this->options);
+    }
+
+    public function transcriptionModel(string $modelId): TranscriptionModelInterface
+    {
+        return new GroqTranscriptionModel($modelId, $this->options);
     }
 
     public function embeddingModel(string $modelId): EmbeddingModelInterface
