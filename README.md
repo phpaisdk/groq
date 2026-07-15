@@ -88,7 +88,7 @@ use AiSdk\Generate;
 use AiSdk\Groq;
 
 $result = Generate::embedding(['Search query', 'Document text'])
-    ->model(Groq::embedding('nomic-embed-text-v1_5'))
+    ->model(Groq::model('nomic-embed-text-v1_5'))
     ->providerOptions('groq', ['user' => 'user-123'])
     ->run();
 
@@ -105,7 +105,7 @@ use AiSdk\Generate;
 use AiSdk\Groq;
 
 $result = Generate::speech()
-    ->model(Groq::speech('canopylabs/orpheus-v1-english'))
+    ->model(Groq::model('canopylabs/orpheus-v1-english'))
     ->input('Welcome to Orpheus text-to-speech. [cheerful] This is expressive Groq audio generation.')
     ->voice('austin')
     ->format('wav')
@@ -122,7 +122,7 @@ use AiSdk\Generate;
 use AiSdk\Groq;
 
 $result = Generate::transcription(Content::audio(__DIR__.'/meeting.mp3'))
-    ->model(Groq::transcription('whisper-large-v3-turbo'))
+    ->model(Groq::model('whisper-large-v3-turbo'))
     ->run();
 
 echo $result->output->text;

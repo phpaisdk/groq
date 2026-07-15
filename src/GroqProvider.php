@@ -27,22 +27,22 @@ final class GroqProvider extends BaseProvider implements EmbeddingProviderInterf
         return GroqOptions::PROVIDER_NAME;
     }
 
-    public function textModel(string $modelId): TextModelInterface
+    protected function textModel(string $modelId): TextModelInterface
     {
         return new GroqTextModel($modelId, $this->options);
     }
 
-    public function speechModel(string $modelId): SpeechModelInterface
+    protected function speechModel(string $modelId): SpeechModelInterface
     {
         return new GroqSpeechModel($modelId, $this->options);
     }
 
-    public function transcriptionModel(string $modelId): TranscriptionModelInterface
+    protected function transcriptionModel(string $modelId): TranscriptionModelInterface
     {
         return new GroqTranscriptionModel($modelId, $this->options);
     }
 
-    public function embeddingModel(string $modelId): EmbeddingModelInterface
+    protected function embeddingModel(string $modelId): EmbeddingModelInterface
     {
         return new GroqEmbeddingModel($modelId, $this->options);
     }

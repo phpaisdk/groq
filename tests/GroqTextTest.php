@@ -84,7 +84,7 @@ it('generates speech through the Groq vertical', function () {
     Groq::create(['apiKey' => 'gsk-test']);
 
     $result = Generate::speech()
-        ->model(Groq::speech('canopylabs/orpheus-v1-english'))
+        ->model(Groq::model('canopylabs/orpheus-v1-english'))
         ->input('Welcome to Orpheus text-to-speech. [cheerful] This is a Groq speech test.')
         ->voice('austin')
         ->format('wav')
@@ -144,5 +144,5 @@ it('accepts opaque text model ids without a model inventory', function () {
 it('accepts opaque speech model ids without a model inventory', function () {
     Groq::create(['apiKey' => 'gsk-test']);
 
-    expect(Groq::speech('future-speech-model')->modelId())->toBe('future-speech-model');
+    expect(Groq::model('future-speech-model')->modelId())->toBe('future-speech-model');
 });

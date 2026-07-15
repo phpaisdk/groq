@@ -24,7 +24,7 @@ it('transcribes audio and accepts Groq URL input', function () {
     expect(Groq::default())->toBeInstanceOf(TranscriptionProviderInterface::class);
 
     $result = Generate::transcription(Content::audio('https://example.com/clip.mp3', 'audio/mpeg'))
-        ->model(Groq::transcription('whisper-large-v3-turbo'))
+        ->model(Groq::model('whisper-large-v3-turbo'))
         ->run();
 
     $body = (string) $client->lastRequest?->getBody();

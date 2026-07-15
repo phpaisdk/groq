@@ -30,7 +30,7 @@ it('generates Groq embeddings using its documented endpoint', function () {
     Groq::create(['apiKey' => 'gsk-test']);
 
     $result = Generate::embedding('A document')
-        ->model(Groq::embedding('nomic-embed-text-v1_5'))
+        ->model(Groq::model('nomic-embed-text-v1_5'))
         ->providerOptions('groq', ['user' => 'user-123'])
         ->run();
 
@@ -51,7 +51,7 @@ it('rejects unsupported portable dimensions before sending a Groq request', func
     Groq::create(['apiKey' => 'gsk-test']);
 
     Generate::embedding('A document')
-        ->model(Groq::embedding('nomic-embed-text-v1_5'))
+        ->model(Groq::model('nomic-embed-text-v1_5'))
         ->dimensions(256)
         ->run();
 })->throws(\AiSdk\Exceptions\InvalidArgumentException::class);

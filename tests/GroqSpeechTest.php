@@ -44,7 +44,7 @@ it('uses Groq TTS defaults and parses binary wav audio', function () {
     Groq::create(['apiKey' => 'gsk-test']);
 
     $result = Generate::speech()
-        ->model(Groq::speech('canopylabs/orpheus-v1-english'))
+        ->model(Groq::model('canopylabs/orpheus-v1-english'))
         ->input('Welcome to Groq text to speech.')
         ->voice('austin')
         ->run();
@@ -72,7 +72,7 @@ it('normalizes Groq TTS rate-limit errors', function () {
     Groq::create(['apiKey' => 'gsk-test']);
 
     Generate::speech()
-        ->model(Groq::speech('canopylabs/orpheus-v1-english'))
+        ->model(Groq::model('canopylabs/orpheus-v1-english'))
         ->input('Welcome to Groq text to speech.')
         ->voice('austin')
         ->run();
@@ -84,7 +84,7 @@ it('rejects an empty Groq TTS response', function () {
     Groq::create(['apiKey' => 'gsk-test']);
 
     Generate::speech()
-        ->model(Groq::speech('canopylabs/orpheus-v1-english'))
+        ->model(Groq::model('canopylabs/orpheus-v1-english'))
         ->input('Welcome to Groq text to speech.')
         ->voice('austin')
         ->run();
