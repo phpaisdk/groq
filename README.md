@@ -1,5 +1,13 @@
 # aisdk/groq
 
+<a href="https://github.com/phpaisdk/groq/actions"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/phpaisdk/groq/tests.yml?branch=main&label=Tests"></a>
+<a href="https://packagist.org/packages/aisdk/groq"><img alt="Total Downloads" src="https://img.shields.io/packagist/dt/aisdk/groq"></a>
+<a href="https://packagist.org/packages/aisdk/groq"><img alt="Latest Version" src="https://img.shields.io/packagist/v/aisdk/groq"></a>
+<a href="https://packagist.org/packages/aisdk/groq"><img alt="License" src="https://img.shields.io/packagist/l/aisdk/groq"></a>
+<a href="https://whyphp.dev"><img src="https://img.shields.io/badge/Why_PHP-in_2026-7A86E8?style=flat-square&labelColor=18181b" alt="Why PHP in 2026"></a>
+
+------
+
 Official Groq provider for the PHP AI SDK. Uses the shared OpenAI-compatible wire adapter.
 
 ## Installation
