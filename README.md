@@ -206,10 +206,13 @@ $result = Generate::text('Hello')
 composer test
 ```
 
-## Links
+## Documentation
 
-- [Core Package](https://github.com/phpaisdk/core)
-- [OpenAI-Compatible Package](https://github.com/phpaisdk/openai-compatible)
-- [Groq Speech-to-Text Guide](https://console.groq.com/docs/speech-to-text)
-- [Groq Python SDK Embeddings Resource](https://github.com/groq/groq-python/blob/main/src/groq/resources/embeddings.py)
-- [Project Documentation](https://github.com/phpaisdk)
+- [PHP AI SDK documentation](https://phpaisdk.com/docs)
+- [Groq documentation](https://phpaisdk.com/docs/groq)
+
+## Community
+
+- [Contributing](https://github.com/phpaisdk/.github/blob/main/CONTRIBUTING.md)
+- [Support](https://github.com/phpaisdk/.github/blob/main/SUPPORT.md)
+- For private security reports, email [security@phpaisdk.com](mailto:security@phpaisdk.com).
